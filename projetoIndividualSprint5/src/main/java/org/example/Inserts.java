@@ -1,11 +1,15 @@
 package org.example;
 
 import org.checkerframework.common.returnsreceiver.qual.This;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import javax.swing.*;
 import java.text.DateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Objects;
 
 public class Inserts {
     private JdbcTemplate conexao;
@@ -32,5 +36,19 @@ public class Inserts {
         System.out.println("Iniciando inserção");
         conexao.update("CALL inserirDadosMaquina (?, ?, ?, ?, ?, ?, ?, now())", user, comp1, gath.getUsoMemoria(), comp2, gath.getUsoProcessador(), comp3, gath.getTotalDisco());
         System.out.println("Inserção finalizada");
+    }
+
+    public void buscarUsuario(Usuario user, JFrame tela){
+        GraficInterface g1 = new GraficInterface(this.user);
+        List<Object> encontrados =  conexao.query(String.format("SELECT * FROM usuario WHERE email = '%s' and senha = '%s'", user.email(), user.senha()), new BeanPropertyRowMapper<>(Object.class));
+        if (encontrados.size() == 1){
+            g1.dataScreen();
+            tela.setVisible(false);
+            System.out.println("achei");
+
+        } else{
+            System.out.println("nao achei");
+            System.out.println(user.email() + user.senha());
+        }
     }
 }
